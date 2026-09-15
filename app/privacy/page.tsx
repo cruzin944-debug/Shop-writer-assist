@@ -20,10 +20,13 @@ export default function PrivacyPage() {
         </p>
         <h2 className="mt-10 text-xl font-semibold text-ink">Waitlist form</h2>
         <p className="mt-3 text-muted">
-          The waitlist endpoint validates your email and returns a success
-          message. It does not currently persist submissions to a database or
-          third-party ESP. Treat anything you submit as a request to be
-          contacted — not as an account.
+          This site is a static export. The waitlist form does not post to a
+          server. It opens your mail app with a message addressed to{" "}
+          <a className="font-medium text-navy underline" href="mailto:contact@shopwriterasst.com">
+            contact@shopwriterasst.com
+          </a>
+          . Nothing is stored here. Treat that email as a request to be contacted
+          — not as an account.
         </p>
         <h2 className="mt-10 text-xl font-semibold text-ink">Contact</h2>
         <p className="mt-3 text-muted">

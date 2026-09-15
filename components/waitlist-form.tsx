@@ -2,6 +2,9 @@
 
 import { FormEvent, useState } from "react";
 
+const CONTACT_EMAIL = "contact@shopwriterasst.com";
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const roles = [
   "Service writer / advisor",
   "Shop owner / manager",
@@ -9,55 +12,57 @@ const roles = [
   "Other",
 ];
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "success" | "error";
 
 export function WaitlistForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
-    const payload = {
-      email: String(data.get("email") ?? "").trim(),
-      name: String(data.get("name") ?? "").trim(),
-      role: String(data.get("role") ?? "").trim(),
-      shop: String(data.get("shop") ?? "").trim(),
-      demo: data.get("demo") === "on",
-    };
+    const email = String(data.get("email") ?? "").trim();
+    const name = String(data.get("name") ?? "").trim();
+    const role = String(data.get("role") ?? "").trim();
+    const shop = String(data.get("shop") ?? "").trim();
+    const demo = data.get("demo") === "on";
 
-    setStatus("submitting");
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const result = (await response.json()) as { error?: string; message?: string };
-      if (!response.ok) {
-        setStatus("error");
-        setMessage(result.error ?? "Something went wrong. Email us instead.");
-        return;
-      }
-      setStatus("success");
-      setMessage(result.message ?? "You’re on the list.");
-      form.reset();
-    } catch {
+    if (!emailPattern.test(email) || email.length > 200) {
       setStatus("error");
-      setMessage("Network error. Try again or email contact@shopwriterasst.com.");
+      setMessage("Enter a valid work email.");
+      return;
     }
+
+    const subject = "Shop Writer Assist waitlist";
+    const body = [
+      "Waitlist / demo request from shopwriterasst.com",
+      "",
+      `Name: ${name || "(not provided)"}`,
+      `Reply-to email: ${email}`,
+      `Role: ${role || "(not provided)"}`,
+      `Shop: ${shop || "(not provided)"}`,
+      `Demo requested: ${demo ? "yes" : "no"}`,
+    ].join("\n");
+
+    const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+    setStatus("success");
+    form.reset();
   }
 
   if (status === "success") {
     return (
       <div className="rounded-2xl border border-accent/30 bg-navy p-6 text-cream" role="status">
-        <p className="font-serif text-2xl italic text-accent-bright">You’re on the list.</p>
+        <p className="font-serif text-2xl italic text-accent-bright">Open your mail app to send.</p>
         <p className="mt-2 text-sm leading-relaxed text-cream/75">
-          {message} This waitlist is a placeholder intake — we don’t charge a
-          card here. We’ll follow up at the email you provided.
+          This static site has no waitlist server. Your mail client should open a
+          message to{" "}
+          <a className="underline decoration-accent/60 underline-offset-2" href={`mailto:${CONTACT_EMAIL}`}>
+            {CONTACT_EMAIL}
+          </a>
+          . If nothing opened, email that address directly. No card required — nothing
+          is stored here.
         </p>
       </div>
     );
@@ -118,11 +123,7 @@ export function WaitlistForm() {
         </label>
       </div>
       <label className="flex items-start gap-2.5 text-sm text-cream/80">
-        <input
-          name="demo"
-          type="checkbox"
-          className="mt-1 h-4 w-4 rounded border-white/30"
-        />
+        <input name="demo" type="checkbox" className="mt-1 h-4 w-4 rounded border-white/30" />
         I’d like a walkthrough / demo when available
       </label>
       {status === "error" ? (
@@ -132,17 +133,17 @@ export function WaitlistForm() {
       ) : null}
       <button
         type="submit"
-        disabled={status === "submitting"}
-        className="w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold text-navy-deep transition-colors hover:bg-accent-bright disabled:opacity-60 sm:w-auto"
+        className="w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold text-navy-deep transition-colors hover:bg-accent-bright sm:w-auto"
       >
-        {status === "submitting" ? "Sending…" : "Join waitlist"}
+        Open email to join waitlist
       </button>
       <p className="text-xs leading-relaxed text-cream/50">
-        Placeholder intake only — this form does not process payments and does
-        not currently persist to a CRM. Prefer email?{" "}
-        <a className="underline decoration-accent/60 underline-offset-2" href="mailto:contact@shopwriterasst.com">
-          contact@shopwriterasst.com
-        </a>
+        Static site — this form does not save to a server or process payments. It
+        opens a message to{" "}
+        <a className="underline decoration-accent/60 underline-offset-2" href={`mailto:${CONTACT_EMAIL}`}>
+          {CONTACT_EMAIL}
+        </a>{" "}
+        in your mail app so you can send the request.
       </p>
     </form>
   );

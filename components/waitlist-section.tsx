@@ -10,8 +10,14 @@ export function WaitlistSection() {
             Request a demo. Join the waitlist.
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-cream/70">
-            Tell us how you write ROs today. We’ll reach out when a shop-ready
-            trial is available. No card required.
+            Tell us how you write ROs today. The form opens an email to{" "}
+            <a
+              className="underline decoration-accent/60 underline-offset-2"
+              href="mailto:contact@shopwriterasst.com"
+            >
+              contact@shopwriterasst.com
+            </a>{" "}
+            — this static site has no waitlist backend. No card required.
           </p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-navy p-5 sm:p-7">

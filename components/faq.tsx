@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     q: "When can we try it?",
-    a: "We’re collecting waitlist and demo requests now. Use the form on this page or email contact@shopwriterasst.com.",
+    a: "We’re collecting waitlist and demo requests now. Use the form on this page (it opens an email to contact@shopwriterasst.com) or write that address directly.",
   },
   {
     q: "Are the prices real?",
